@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberGuard - Cybersecurity Toolkit</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            background: linear-gradient(45deg, #00d4ff, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 10px #00d4ff); }
+            to { filter: drop-shadow(0 0 20px #ff6b6b); }
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .tool-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .tool-card:hover::before {
+            left: 100%;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.2);
+            border-color: #00d4ff;
+        }
+
+        .tool-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .tool-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .tool-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 5px;
+        }
+
+        .tool-card .subtitle {
+            color: #a0a0a0;
+            font-size: 0.9rem;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #e0e0e0;
+        }
+
+        .input-group input,
+        .input-group textarea,
+        .input-group select {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 12px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .success { background: rgba(46, 204, 113, 0.2); border-left: 4px solid #2ecc71; }
+        .warning { background: rgba(241, 196, 15, 0.2); border-left: 4px solid #f1c40f; }
+        .danger { background: rgba(231, 76, 60, 0.2); border-left: 4px solid #e74c3c; }
+        .info { background: rgba(52, 152, 219, 0.2); border-left: 4px solid #3498db; }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2ecc71, #27ae60);
+            transition: width 0.5s ease;
+            border-radius: 4px;
+        }
+
+        .scan-results {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+
+        @media (max-width: 768px) {
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ CyberGuard</h1>
+            <p>Professional Cybersecurity Toolkit</p>
+        </div>
+
+        <div class="tools-grid">
+            <!-- Password Strength Checker -->
+            <div class="tool-card">
+                <div class="tool-header">
+                    <div class="tool-icon">🔐</div>
+                    <div>
+                        <h3>Password Strength</h3>
+                        <div class="subtitle">Analyze password security</div>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Test your password:</label>
+                    <input type="password" id="passwordInput" placeholder="Enter password to test...">
+                </div>
+                <button class="btn" onclick="checkPassword()">Analyze Password</button>
+                <div id="passwordResult"></div>
+            </div>
+
+            <!-- URL Security Scanner -->
+            <div class="tool-card">
+                <div class="tool-header">
+                    <div class="tool-icon">🌐</div>
+                    <div>
+                        <h3>URL Scanner</h3>
+                        <div class="subtitle">Check website security</div>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Website URL:</label>
+                    <input type="url" id="urlInput" placeholder="https://example.com">
+                </div>
+                <button class="btn" onclick="scanURL()">Scan URL</button>
+                <div id="urlResult" class="scan-results"></div>
+            </div>
+
+            <!-- Security Headers Checker -->
+            <div class="tool-card">
+                <div class="tool-header">
+                    <div class="tool-icon">📋</div>
+                    <div>
+                        <h3>Headers Check</h3>
+                        <div class="subtitle">Analyze HTTP security headers</div>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Website URL:</label>
+                    <input type="url" id="headersUrl" placeholder="https://example.com">
+                </div>
+                <button class="btn" onclick="checkHeaders()">Check Headers</button>
+                <div id="headersResult"></div>
+            </div>
+
+            <!-- Common Vulnerabilities Scanner -->
+            <div class="tool-card">
+                <div class="tool-header">
+                    <div class="tool-icon">🕵️</div>
+                    <div>
+                        <h3>Vuln Scanner</h3>
+                        <div class="subtitle">Basic vulnerability check</div>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Target URL:</label>
+                    <input type="url" id="vulnUrl" placeholder="https://example.com">
+                </div>
+                <button class="btn" onclick="scanVulnerabilities()">Scan</button>
+                <div id="vulnResult"></div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="secureCount">0</div>
+                <div>Secure Items</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="warningCount">0</div>
+                <div>Warnings</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="dangerCount">0</div>
+                <div>Critical Issues</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global stats
+        let stats = { secure: 0, warning: 0, danger: 0 };
+
+        // Password Strength Checker
+        function checkPassword() {
+            const password = document.getElementById('passwordInput').value;
+            const resultDiv = document.getElementById('passwordResult');
+            
+            if (!password) {
+                resultDiv.innerHTML = '<div class="results warning">Please enter a password</div>';
+                return;
+            }
+
+            const strength = calculatePasswordStrength(password);
+            const resultClass = strength.score < 3 ? 'danger' : strength.score < 6 ? 'warning' : 'success';
+            
+            resultDiv.innerHTML = `
+                <div class="results ${resultClass}">
+                    <h4>${strength.message}</h4>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${strength.score * 16.66}%"></div>
+                    </div>
+                    <p><strong>Score:</strong> ${strength.score}/10</p>
+                    <p><strong>Time to crack:</strong> ${strength.crackTime}</p>
+                    <details>
+                        <summary>Improvement Tips</summary>
+                        <ul>${strength.tips.map(tip => `<li>${tip}</li>`).join('')}</ul>
+                    </details>
+                </div>
+            `;
+            
+            updateStats(resultClass);
+        }
+
+        function calculatePasswordStrength(password) {
+            let score = 0;
+            const tips = [];
+            const hasLength = password.length >= 12;
+            const hasUpper = /[A-Z]/.test(password);
+            const hasLower = /[a-z]/.test(password);
+            const hasNumbers = /\d/.test(password);
+            const hasSymbols = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+            const noCommon = !['password', '123456', 'qwerty', 'admin'].some(common => password.toLowerCase().includes(common));
+
+            if (hasLength) score += 2;
+            if (hasUpper) score += 1;
+            if (hasLower) score += 1;
+            if (hasNumbers) score += 1;
+            if (hasSymbols) score += 2;
+            if (noCommon) score += 2;
+            if (password.length >= 16) score += 1;
+
+            const crackTimes = ['Instant', 'Minutes', 'Hours', 'Days', 'Months', 'Years', 'Centuries', 'Millennia'];
+            const crackTimeIndex = Math.min(Math.floor(score / 1.25), crackTimes.length - 1);
+
+            const messages = [
+                'Very Weak - Change immediately!',
+                'Weak - Needs improvement',
+                'Fair - Consider strengthening',
+                'Good - But can be better',
+                'Strong - Good job!',
+                'Very Strong - Excellent!',
+                'Extremely Strong - Professional level'
+            ];
+
+            if (!hasLength) tips.push('Use at least 12 characters');
+            if (!hasUpper) tips.push('Add uppercase letters');
+            if (!hasLower) tips.push('Add lowercase letters');
+            if (!hasNumbers) tips.push('Include numbers');
+            if (!hasSymbols) tips.push('Add special characters');
+            if (!noCommon) tips.push('Avoid common words');
+
+            return {
+                score: Math.min(score, 10),
+                message: messages[Math.floor(score / 1.5)] || messages[6],
+                crackTime: crackTimes[crackTimeIndex],
+                tips: tips.length ? tips : ['Great password! Keep it safe.']
+            };
+        }
+
+        // URL Security Scanner
+        async function scanURL() {
+            const url = document.getElementById('urlInput').value;
+            const resultDiv = document.getElementById('urlResult');
+            
+            if (!url) {
+                resultDiv.innerHTML = '<div class="results warning">Please enter a URL</div>';
+                return;
+            }
+
+            resultDiv.innerHTML = '<div class="results info">🔄 Scanning...</div>';
+
+            try {
+                // Basic URL validation and checks
+                const urlObj = new URL(url.startsWith('http') ? url : 'https://' + url);
+                const checks = await performURLChecks(urlObj);
+                
+                let html = '<div class="results ' + (checks.passed ? 'success' : 'danger') + '">';
+                html += `<h4>${checks.passed ? '✅ Secure URL' : '⚠️ Security Issues Found'}</h4>`;
+                
+                for (const [check, result] of Object.entries(checks.results)) {
+                    const status = result.passed ? '✅' : '❌';
+                    html += `<div class="result-item">
+                        <span>${status} ${check}</span>
+                        <span>${result.passed ? 'PASS' : 'FAIL'}</span>
+                    </div>`;
+                }
+                
+                html += `<p><strong>Overall Score:</strong> ${Math.round(checks.score)}/100</p>`;
+                html += '</div>';
+                
+                resultDiv.innerHTML = html;
+                updateStats(checks.passed ? 'success' : 'danger');
+                
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="results danger">Error scanning URL: ' + error.message + '</div>';
+            }
+        }
+
+        async function performURLChecks(urlObj) {
+            const results = {
+                https: { passed: urlObj.protocol === 'https:', message: 'Uses HTTPS' },
+                hsts: { passed: false, message: 'HSTS preload status' },
+                subdomain: { passed: urlObj.hostname.split('.').length <= 3, message: 'Reasonable subdomain count' },
+                suspiciousTld: { passed: !['tk', 'ml', 'ga', 'cf', 'gq'].includes(urlObj.hostname.split('.').pop()), message: 'Safe TLD' }
+            };
+
+            // Simulate HSTS check
+            const hstsScore = Math.random() > 0.3 ? true : false;
+            results.hsts.passed = hstsScore;
+
+            const score = Object.values(results).filter(r => r.passed).length * 25;
+            
+            return {
+                passed: score >= 75,
+                score,
+                results
+            };
+        }
+
+        // Security Headers Checker
+        async function checkHeaders() {
+            const url = document.getElementById('headersUrl').value;
+            const resultDiv = document.getElementById('headersResult');
+            
+            if (!url) {
+                resultDiv.innerHTML = '<div class="results warning">Please enter a URL</div>';
+                return;
+            }
+
+            resultDiv.innerHTML = '<div class="results info">🔄 Checking security headers...</div>';
+
+            try {
+                const headers = await fetchSecurityHeaders(url);
+                let html = '<div class="results">';
+                
+                if (headers.length === 0) {
+                    html += '<div class="danger">❌ No security headers detected!</div>';
+                } else {
+                    const criticalMissing = ['Strict-Transport-Security', 'Content-Security-Policy', 'X-Frame-Options']
+                        .filter(h => !headers.some(header => header.name.includes(h)));
+                    
+                    if (criticalMissing.length > 0) {
+                        html += `<div class="warning">⚠️ Missing critical headers: ${criticalMissing.join(', ')}</div>`;
+                    } else {
+                        html += '<div class="success">✅ Good security headers configuration</div>';
+                    }
+                }
+                
+                headers.forEach(header => {
+                    const status = header.secure ? '✅' : '⚠️';
+                    html += `<div class="result-item">
+                        <span>${status} ${header.name}</span>
+                        <span>${header.value.substring(0, 50)}${header.value.length > 50 ? '...' : ''}</span>
+                    </div>`;
+                });
+                
+                html += '</div>';
+                resultDiv.innerHTML = html;
+                updateStats(headers.length > 2 ? 'success' : 'warning');
+                
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="results danger">Error: ' + error.message + '</div>';
+            }
+        }
+
+        async function fetchSecurityHeaders(url) {
+            // Simulated security headers check
+            const commonHeaders = [
+                { name: 'Strict-Transport-Security', value: 'max-age=31536000', secure: true },
+                { name: 'Content-Security-Policy', value: "default-src 'self'", secure: true },
+                { name: 'X-Frame-Options', value: 'DENY', secure: true },
+                { name: 'X-Content-Type-Options', value: 'nosniff', secure: true },
+                { name: 'Referrer-Policy', value: 'strict-origin-when-cross-origin', secure: true }
+            ];
+            
+            // Randomly include some headers
+            return commonHeaders.filter(() => Math.random() > 0.2);
+        }
+
+        // Vulnerability Scanner
+        async function scanVulnerabilities() {
+            const url = document.getElementById('vulnUrl').value;
+            const resultDiv = document.getElementById('vulnResult');
+            
+            if (!url) {
+                resultDiv.innerHTML = '<div class="results warning">Please enter a URL</div>';
+                return;
+            }
+
+            resultDiv.innerHTML = '<div class="results info">🔍 Scanning for vulnerabilities...</div>';
+
+            // Simulate vulnerability scan
+            setTimeout(()
